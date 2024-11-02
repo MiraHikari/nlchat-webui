@@ -1,34 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { ConfigProvider, Spin, theme } from 'antd'
+import React, { lazy, Suspense } from 'react'
+import styled from 'styled-components'
+import { SerialPortProvider } from './context/PortContext'
+import './index.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+const ArtPlums = lazy(() => import('./components/ArtPlums'))
+const ChatUI = lazy(() => import('./components/ChatUI'))
+const Footer = lazy(() => import('./components/Footer'))
+const PortControl = lazy(() => import('./components/PortControl'))
+const Terminal = lazy(() => import('./components/PortTerminal'))
 
+const Layout = styled.div`
+  display: grid;
+  grid-template-columns: 0.3fr 0.7fr;
+  gap: 1.3rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`
+
+const App: React.FC = () => {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <ConfigProvider theme={{
+      algorithm: theme.darkAlgorithm,
+    }}
+    >
+      <Suspense fallback={<Spin fullscreen tip="加载页面组件中..." />}>
+        <SerialPortProvider>
+          <PortControl />
+          <Layout>
+            <Terminal />
+            <ChatUI />
+          </Layout>
+        </SerialPortProvider>
+        <ArtPlums />
+        <Footer />
+      </Suspense>
+    </ConfigProvider>
   )
 }
 
