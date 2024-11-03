@@ -2,6 +2,8 @@
 
 一个基于 Web Serial API 的串口通信应用，提供直观的聊天界面进行串口数据收发。
 
+[在线示例](https://nlchat.what-the-fuck.sbs)
+
 ## 功能特点
 
 - 🔌 串口连接管理
@@ -83,10 +85,7 @@ npm run build
 
 ## 浏览器兼容性
 
-需要浏览器支持 Web Serial API，目前支持的浏览器：
-- Chrome 89+
-- Edge 89+
-- Opera 75+
+需要浏览器支持 Web Serial API，目前支持的浏览器可以查看该兼容性列表：https://caniuse.com/web-serial
 
 ## 许可证
 
