@@ -1,6 +1,7 @@
 import { ConfigProvider, Spin, theme } from 'antd'
 import React, { lazy, Suspense } from 'react'
 import styled from 'styled-components'
+import CompatibilityCheck from './components/CompatibilityCheck'
 import { SerialPortProvider } from './context/PortContext'
 import './index.css'
 
@@ -28,6 +29,7 @@ const App: React.FC = () => {
     >
       <Suspense fallback={<Spin fullscreen tip="加载页面组件中..." />}>
         <SerialPortProvider>
+          <CompatibilityCheck />
           <PortControl />
           <Layout>
             <Terminal />

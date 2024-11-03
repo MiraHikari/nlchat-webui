@@ -53,7 +53,7 @@ export const SerialPortProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     if (settings.packageTimeout === 0) {
       // 不进行合包，直接处理
       const decoder = new TextDecoder()
-      const text = decoder.decode(data)
+      const text = decoder.decode(data, { stream: true })
       addLog('receive', text)
       return
     }
@@ -68,23 +68,40 @@ export const SerialPortProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     // 设置新的定时器
     serialTimerRef.current = setTimeout(() => {
-      // 合并所有数据
-      const totalLength = serialDataRef.current.reduce((acc, curr) => acc + curr.length, 0)
-      const combinedData = new Uint8Array(totalLength)
+      try {
+        // 计算合并后数据的总长度
+        const totalLength = serialDataRef.current.reduce((acc, curr) => acc + curr.length, 0)
+        const combinedData = new Uint8Array(totalLength)
 
-      let offset = 0
-      serialDataRef.current.forEach((chunk) => {
-        combinedData.set(chunk, offset)
-        offset += chunk.length
-      })
+        // 合并数据
+        let offset = 0
+        serialDataRef.current.forEach((chunk) => {
+          combinedData.set(chunk, offset)
+          offset += chunk.length
+        })
 
-      // 处理合并后的数据
-      const decoder = new TextDecoder()
-      const text = decoder.decode(combinedData)
-      addLog('receive', text)
+        // 使用 TextDecoder 解码完整数据
+        const decoder = new TextDecoder('utf-8', {
+          fatal: false, // 遇到无效字符时不抛出错误
+          ignoreBOM: true // 忽略 BOM 标记
+        })
 
-      // 清空缓存的数据
-      serialDataRef.current = []
+        const text = decoder.decode(combinedData)
+
+        // 检查并清理可能的无效字符
+        const cleanText = text.replace(/\uFFFD/g, '') // 移除替换字符
+
+        if (cleanText.trim()) { // 只有当文本非空时才添加日志
+          addLog('receive', cleanText)
+        }
+      }
+      catch (error) {
+        console.error('Error processing received data:', error)
+      }
+      finally {
+        // 清空缓存的数据
+        serialDataRef.current = []
+      }
     }, settings.packageTimeout)
   }, [settings.packageTimeout, addLog])
 

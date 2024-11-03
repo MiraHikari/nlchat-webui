@@ -112,8 +112,10 @@ function parseMessage(log: { data: string, timestamp: number, type: 'send' | 're
 
   // 用于存储系统消息
   const systemMessages: string[] = []
-  // 用于存储对话内容
-  const dialogContent: string[] = []
+  // 用于存储发送的消息
+  const sentContent: string[] = []
+  // 用于存储接收的消息
+  const receivedContent: string[] = []
 
   contents.forEach((content) => {
     // 检查是否是系统消息
@@ -125,12 +127,12 @@ function parseMessage(log: { data: string, timestamp: number, type: 'send' | 're
       // 提取实际内容
       const match = content.match(/This is the content of the (?:client|server):(.*)/)
       if (match && match[1]) {
-        dialogContent.push(match[1].trim())
+        receivedContent.push(match[1].trim())
       }
     }
     // 处理自己发送的消息
     else if (log.type === 'send') {
-      dialogContent.push(content.trim())
+      sentContent.push(content.trim())
     }
   })
 
@@ -143,22 +145,29 @@ function parseMessage(log: { data: string, timestamp: number, type: 'send' | 're
     })
   }
 
-  // 如果有对话内容，将它们合并为一条
-  if (dialogContent.length > 0) {
+  // 如果有发送的内容，将它们合并为一条
+  if (sentContent.length > 0) {
     messages.push({
-      content: dialogContent.join(' '), // 使用空格连接多段内容
+      content: sentContent.join(' '), // 使用空格连接多段内容
       timestamp: log.timestamp,
-      sender: log.type === 'send' ? 'me' : 'other',
+      sender: 'me',
+    })
+  }
+
+  // 如果有接收的内容，将它们合并为一条
+  if (receivedContent.length > 0) {
+    messages.push({
+      content: receivedContent.join(' '), // 使用空格连接多段内容
+      timestamp: log.timestamp,
+      sender: 'other',
     })
   }
 
   return messages
 }
 
-interface ChatUIProps {
-}
 
-const ChatUI: React.FC<ChatUIProps> = () => {
+const ChatUI: React.FC = () => {
   const { logs } = useSerialPort()
 
   // 处理所有消息
