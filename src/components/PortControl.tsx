@@ -68,15 +68,15 @@ const PortControl: React.FC = () => {
 
       // 直接连接选中的串口
       await connect(port)
-      message.success('Connected successfully')
+      message.success('连接成功！')
     }
     catch (error: any) {
       if (error.name === 'NotFoundError') {
-        message.warning('No port selected')
+        message.warning('未选择任何串口！')
       }
       else {
         console.error('Failed to connect:', error)
-        message.error('Failed to connect to port')
+        message.error('连接串口失败！')
       }
     }
     finally {
@@ -89,11 +89,11 @@ const PortControl: React.FC = () => {
     try {
       setLoading(true)
       await disconnect()
-      message.success('Disconnected successfully')
+      message.success('断开连接成功！')
     }
     catch (error) {
       console.error('Failed to disconnect:', error)
-      message.error('Failed to disconnect from port')
+      message.error('断开连接失败！')
     }
     finally {
       setLoading(false)

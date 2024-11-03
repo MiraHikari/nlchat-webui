@@ -1,7 +1,7 @@
 import { Modal } from 'antd'
 import { useEffect, useState } from 'react'
 
-const CompatibilityCheck = () => {
+function CompatibilityCheck() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isCompatible, setIsCompatible] = useState(true)
 
@@ -28,9 +28,11 @@ const CompatibilityCheck = () => {
       okText="我知道了"
       cancelText="关闭"
     >
-      {isCompatible ? (
+      {isCompatible
+? (
         <p>您的浏览器支持 Web Serial API，可以正常使用串口通信功能。</p>
-      ) : (
+      )
+: (
         <div>
           <p>您的浏览器不支持 Web Serial API，无法使用串口通信功能。</p>
           <p>请使用以下支持的浏览器：</p>

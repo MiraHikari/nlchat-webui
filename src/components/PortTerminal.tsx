@@ -178,10 +178,10 @@ function HTMLEncode(html: string): string {
 async function copyToClipboard(text: string) {
   try {
     await navigator.clipboard.writeText(text)
-    message.success('Copied to clipboard')
+    message.success('已复制到剪贴板')
   }
   catch {
-    message.error('Failed to copy')
+    message.error('复制失败')
   }
 }
 
@@ -286,7 +286,7 @@ const SerialTerminal: React.FC<SerialTerminalProps> = ({ height }) => {
       }
       catch (error) {
         console.error('Failed to send data:', error)
-        message.error('Failed to send data')
+        message.error('发送失败')
       }
     }
   }
@@ -326,7 +326,7 @@ const SerialTerminal: React.FC<SerialTerminalProps> = ({ height }) => {
       <TerminalHeader>
         <Space>
           <div className="title">串口执行日志</div>
-          <Tooltip title="Settings">
+          <Tooltip title="设置">
             <ToolbarButton
               type="text"
               icon={<SettingOutlined />}

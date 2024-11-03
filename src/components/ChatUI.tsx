@@ -11,10 +11,11 @@ interface Message {
 
 const Container = styled(Card)`
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 4px;
   height: calc(100vh - 220px);
   min-height: 400px;
-  background: #1f1f1f;
+  background: #1e1e1e;
+  border: 1px solid #434343;
   display: flex;
   flex-direction: column;
 
@@ -57,11 +58,11 @@ const MessageContainer = styled.div<{ isSender: boolean }>`
 `
 
 const MessageContent = styled.div<{ isSender: boolean }>`
-  background: ${props => (props.isSender ? '#1890ff' : '#2f2f2f')};
+  background: ${props => (props.isSender ? '#177ddc' : '#2c2c2c')};
   padding: 12px;
   border-radius: 12px;
   border-top-${props => (props.isSender ? 'right' : 'left')}-radius: 4px;
-  word-break: break-word; /* 确保长文本正确换行 */
+  word-break: break-word;
 `
 
 const AvatarWrapper = styled.div`
@@ -102,6 +103,16 @@ const SystemMessageContent = styled(MessageContent)`
   border-radius: 8px;
   opacity: 0.9;
   white-space: pre-line; // 保持换行符
+`
+
+const ChatUIHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #434343;
+  color: #ffffff;
+  font-size: 14px;
 `
 
 function parseMessage(log: { data: string, timestamp: number, type: 'send' | 'receive' }): Message[] {
@@ -166,7 +177,6 @@ function parseMessage(log: { data: string, timestamp: number, type: 'send' | 're
   return messages
 }
 
-
 const ChatUI: React.FC = () => {
   const { logs } = useSerialPort()
 
@@ -187,23 +197,25 @@ const ChatUI: React.FC = () => {
 
     if (isSystem) {
       return (
-        <MessageContainer key={index} isSender={false}>
-          <AvatarWrapper>
-            <SystemAvatar isSender={false}>
-              系统
-            </SystemAvatar>
-          </AvatarWrapper>
-          <div>
-            <SystemMessageContent isSender={false}>
-              <Typography.Text style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
-                {message.content}
-              </Typography.Text>
-            </SystemMessageContent>
-            <TimeStamp>
-              {formatTimestamp(message.timestamp)}
-            </TimeStamp>
-          </div>
-        </MessageContainer>
+        <div>
+          <MessageContainer key={index} isSender={false}>
+            <AvatarWrapper>
+              <SystemAvatar isSender={false}>
+                系统
+              </SystemAvatar>
+            </AvatarWrapper>
+            <div>
+              <SystemMessageContent isSender={false}>
+                <Typography.Text style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                  {message.content}
+                </Typography.Text>
+              </SystemMessageContent>
+              <TimeStamp>
+                {formatTimestamp(message.timestamp)}
+              </TimeStamp>
+            </div>
+          </MessageContainer>
+        </div>
       )
     }
 
@@ -233,6 +245,7 @@ const ChatUI: React.FC = () => {
 
   return (
     <Container bordered={false}>
+      <ChatUIHeader>聊天界面化显示</ChatUIHeader>
       <ScrollableContainer ref={scrollRef}>
         {messages.map((message, index) => renderMessage(message, index))}
       </ScrollableContainer>
